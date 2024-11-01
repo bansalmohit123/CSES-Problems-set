@@ -1,26 +1,44 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<int> solve(int n){
+vector<int> digitCal(int n) {
     vector<int> digits;
-    while (n>0)
-    {
-        digits.push_back(n%10);
-        n/=10;
+    while (n != 0) {
+        digits.push_back(n % 10);
+        n /= 10;
     }
     return digits;
-    
 }
 
-int main(){
+int solve(int num, vector<int>& dp) {
+    if (num == 0) {
+        return 0;
+    }
+
+    if (dp[num] != -1) {
+        return dp[num];
+    }
+
+    int minSteps = INT_MAX;
+    vector<int> digits = digitCal(num); 
+    for (int d : digits) {
+        if (d > 0 && num - d >= 0) {
+            minSteps = min(minSteps, 1 + solve(num - d, dp));
+        }
+    }
+
+    dp[num] = minSteps;
+    return dp[num];
+}
+
+int main() {
     int n;
     cin >> n;
-    int steps = 0;
-    while(n>0){
-    vector<int> digits= solve(n);
-    int maximum = *max_element(digits.begin(), digits.end());
-    n-=maximum;
-    steps++;
-    }
-    cout << steps << endl;
+
+    vector<int> dp(n + 1, -1);  
+    int result = solve(n, dp);
+    
+    cout << result << endl;  
+    
+    return 0;
 }
